@@ -4,4 +4,4 @@
   <h1>TV SHOWS</h1>
 </template>
 
-<style scoped></style>
+<style scoped lang="scss"></style>
