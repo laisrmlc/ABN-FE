@@ -92,12 +92,12 @@ onBeforeMount(async () => {
   }
 
   &__image {
-    box-shadow: 0 8px 80px rgba(0, 0, 0, 0.25);
     img {
-      border-radius: 5px;
       display: block;
       width: 100%;
       height: auto;
+      border-radius: 5px;
+      box-shadow: 10px 10px 20px grey;
     }
   }
 

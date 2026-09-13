@@ -3,6 +3,7 @@ import type { Show } from '@/types/showTypes'
 
 defineProps<{
   filteredShows: Array<Show>
+  filterAnnouncement: string
 }>()
 
 const showGenres = (show: Show) => {
@@ -12,6 +13,7 @@ const showGenres = (show: Show) => {
 
 <template>
   <section class="show-list" role="region" aria-label="Available shows">
+    <div class="sr-only" aria-live="polite">{{ filterAnnouncement }}</div>
     <router-link
       class="show-card"
       v-for="show in filteredShows"
@@ -34,17 +36,18 @@ const showGenres = (show: Show) => {
 .show-list {
   padding: 1rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 280px));
+  justify-content: start;
   gap: 1rem;
   max-width: 1200px;
   margin: 0 auto;
 
   @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(150px, 280px));
+    justify-content: center;
   }
 
   @media (max-width: 440px) {
-    justify-content: center;
     grid-template-columns: minmax(150px, 280px);
   }
 }
