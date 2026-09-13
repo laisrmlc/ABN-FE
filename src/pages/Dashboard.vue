@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, ref } from 'vue'
+import { computed, nextTick, onBeforeMount, ref } from 'vue'
 
 const shows = ref([])
+const titleRef = ref<HTMLElement | null>(null)
 const genres = computed(() => {
   const genresFromShows = shows.value.flatMap((show) => show.genres)
 
@@ -13,16 +14,14 @@ const filteredShows = computed(() => {
     return shows.value
   }
 
-  return shows.value.filter((show) => show.genres.includes(selectedGenre.value))
+  return shows.value
+    .filter((show) => show.genres.includes(selectedGenre.value))
+    .sort((a, b) => (b.rating.average ?? 0) - (a.rating.average ?? 0))
 })
 
 const getShows = async () => {
   const response = await fetch('https://api.tvmaze.com/shows')
   return await response.json()
-}
-
-const handleSelectGenre = (genre) => {
-  console.log(genre)
 }
 
 const showGenres = (show) => {
@@ -41,21 +40,21 @@ const filterAnnouncement = computed(() => {
 })
 
 onBeforeMount(async () => {
-  shows.value = await getShows()
+  document.title = 'TV Shows'
+  await nextTick()
+  titleRef.value?.focus()
+
+  const result = await getShows()
+  shows.value = result.sort((a, b) => (b.rating.average ?? 0) - (a.rating.average ?? 0))
 })
 </script>
 
 <template>
   <div class="header">
-    <h1 class="header__title">TV SHOWS</h1>
+    <h1 class="header__title" ref="titleRef" tabindex="-1">TV SHOWS</h1>
     <!--genres-->
     <label class="header__genre-select--label" for="genre-select">Filter shows by genre</label>
-    <select
-      id="genre-select"
-      class="header__genre-select"
-      v-model="selectedGenre"
-      @change="handleSelectGenre(selectedGenre)"
-    >
+    <select id="genre-select" class="header__genre-select" v-model="selectedGenre">
       <option value="all" key="all">All genres</option>
       <option v-for="category in genres" :key="category" :value="category">
         {{ category }}
@@ -88,6 +87,7 @@ onBeforeMount(async () => {
 .header {
   padding: 1rem;
   background-color: #288254;
+  height: 15vh;
 
   &__title {
     color: #ffd942;
@@ -126,10 +126,11 @@ onBeforeMount(async () => {
 
 .show-card {
   border: 1px solid #288254;
+  color: black;
+  text-decoration: none;
   border-radius: 5px;
   overflow: hidden;
   box-shadow: 10px 10px 20px grey;
-  transition: transform 0.2s ease;
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease;
