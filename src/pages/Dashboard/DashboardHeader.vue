@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { debounce } from '@/utils/debounce'
+import { nextTick, onMounted, ref } from 'vue'
 
 defineProps<{
   genres: string[]
@@ -11,6 +12,13 @@ const emit = defineEmits<{
   search: [value: string]
 }>()
 
+const titleRef = ref<HTMLElement | null>(null)
+
+onMounted(async () => {
+  await nextTick()
+  titleRef.value?.focus()
+})
+
 const handleSearch = debounce((event: Event) => {
   const target = event.target as HTMLInputElement
   emit('search', target.value)
@@ -21,9 +29,9 @@ const handleSearch = debounce((event: Event) => {
   <div class="header">
     <h1 class="header__title" ref="titleRef" tabindex="-1">TV SHOWS</h1>
 
-    <div class="show-list-filters">
-      <div class="genre-filter">
-        <label class="header__genre-select--label" for="genre-select">Filter shows by genre</label>
+    <div class="header__filters">
+      <div class="header__genre-filter">
+        <label class="header__genre-select-label" for="genre-select">Filter shows by genre</label>
         <select
           id="genre-select"
           class="header__genre-select"
@@ -37,11 +45,11 @@ const handleSearch = debounce((event: Event) => {
         </select>
       </div>
 
-      <div class="filter-by-name__input">
+      <div class="header__search">
         <label for="filter-by-name-input" aria-label="Filter shows list by name"></label>
-        <input id="filter-by-name-input" @input="handleSearch" />
+        <input id="filter-by-name-input" @input="handleSearch" placeholder="Search by name" />
         <svg
-          class="filter-by-name__search-icon"
+          class="header__search-icon"
           viewBox="0 0 24 24"
           width="16"
           height="16"
@@ -61,27 +69,28 @@ const handleSearch = debounce((event: Event) => {
 <style scoped lang="scss">
 .header {
   padding: 1rem;
-  background-color: #288254;
+  background-color: var(--color-primary);
   height: fit-content;
 
   &__title {
-    color: #ffd942;
+    color: var(--color-accent);
   }
 
   &__genre-select {
     width: 100%;
     max-width: 20rem;
-    border: 1px solid #288254;
+    border: 1px solid var(--color-primary);
     border-radius: 5px;
-    color: #288254;
-    &--label {
-      color: #ffd942;
-      margin-right: 0.5rem;
-      white-space: nowrap;
-    }
+    color: var(--color-primary);
   }
 
-  .show-list-filters {
+  &__genre-select-label {
+    color: var(--color-accent);
+    margin-right: 0.5rem;
+    white-space: nowrap;
+  }
+
+  &__filters {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -89,14 +98,14 @@ const handleSearch = debounce((event: Event) => {
     margin-top: 1rem;
   }
 
-  .genre-filter {
+  &__genre-filter {
     display: flex;
     align-items: center;
     flex: 1 1 260px;
     min-width: 0;
   }
 
-  .filter-by-name__input {
+  &__search {
     position: relative;
     margin-left: auto;
     display: flex;
@@ -108,27 +117,27 @@ const handleSearch = debounce((event: Event) => {
       width: 100%;
       box-sizing: border-box;
       padding-right: 2rem;
-      border: 1px solid #288254;
+      border: 1px solid var(--color-primary);
       border-radius: 5px;
       max-width: 20rem;
     }
   }
 
-  .filter-by-name__search-icon {
+  &__search-icon {
     position: absolute;
     right: 0.5rem;
-    color: #288254;
+    color: var(--color-primary);
     pointer-events: none;
   }
 
   @media (max-width: 570px) {
-    .genre-filter {
+    .header__genre-filter {
       flex-direction: column;
       align-items: flex-start;
       gap: 0.3rem;
     }
 
-    .filter-by-name__input {
+    .header__search {
       margin-left: 0;
       max-width: none;
       width: 100%;

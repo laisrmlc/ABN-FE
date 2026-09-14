@@ -14,10 +14,10 @@ const router = useRouter()
   </header>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 .header {
-  background-color: #288254;
-  color: #ffd942;
+  background-color: var(--color-primary);
+  color: var(--color-accent);
   height: 15vh;
   padding: 1rem;
 
@@ -28,8 +28,8 @@ const router = useRouter()
 }
 
 .dashboard-button {
-  background-color: #288254;
-  color: #ffd942;
+  background-color: var(--color-primary);
+  color: var(--color-accent);
   border: none;
   transition: transform 0.25s ease;
 
