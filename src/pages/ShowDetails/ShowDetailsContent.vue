@@ -1,23 +1,31 @@
 <script setup lang="ts">
-import { getShows } from '@/utils/showsList'
-import { nextTick, onBeforeMount, ref } from 'vue'
+import { getShowInfo } from '@/utils/showsList'
+import { computed, nextTick, onBeforeMount, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import type { Show } from '@/types/showTypes'
+import DOMPurify from 'dompurify'
+import NotFound from '../NotFound/NotFound.vue'
+import type { Show } from '@/types/showTypes.ts'
 
 const daysOnAir = ref('')
 const route = useRoute()
 const showId = route.params.id
 
-const selectedShow = ref()
+const selectedShow = ref<Show | null>(null)
+const loading = ref(false)
+
+const plainTextSummary = computed(() =>
+  selectedShow.value ? DOMPurify.sanitize(selectedShow.value.summary, { ALLOWED_TAGS: [] }) : '',
+)
 
 const showTitleRef = ref<HTMLElement | null>(null)
 
 onBeforeMount(async () => {
-  const shows = await getShows()
-
-  const selectedShowInfo = shows.find((show: Show) => show.id.toString() === showId?.toString())
-
-  selectedShow.value = selectedShowInfo
+  try {
+    loading.value = true
+    selectedShow.value = await getShowInfo(showId?.toString() || '')
+  } finally {
+    loading.value = false
+  }
 
   if (selectedShow.value) {
     daysOnAir.value = selectedShow.value.schedule.days.join(' and ')
@@ -30,52 +38,56 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <main class="show-details">
-    <p v-if="!selectedShow" role="status">Loading show details…</p>
+  <p v-if="!selectedShow && loading" role="status">Loading show details…</p>
 
-    <template v-else>
-      <div class="show-details__summary" aria-labelledby="show-title">
-        <h1 id="show-title" ref="showTitleRef" tabindex="-1">
-          {{ selectedShow.name }}
-        </h1>
+  <NotFound v-else-if="!selectedShow && !loading" :isShow="true"></NotFound>
 
-        <div class="show-details__image">
-          <img :src="selectedShow.image.medium" :alt="`${selectedShow.name} poster`" />
-        </div>
+  <main v-if="selectedShow" class="show-details">
+    <div class="show-details__summary" aria-labelledby="show-title">
+      <h1 id="show-title" ref="showTitleRef" tabindex="-1">
+        {{ selectedShow?.name }}
+      </h1>
+
+      <div class="show-details__image">
+        <img :src="selectedShow.image?.medium" :alt="`${selectedShow.name} poster`" />
       </div>
+    </div>
 
-      <div class="show-details__content">
-        <div v-html="selectedShow.summary"></div>
-        <div class="show-details__info" aria-labelledby="show-info-heading">
-          <h2 id="show-info-heading">Details</h2>
+    <div class="show-details__content">
+      <p>{{ plainTextSummary }}</p>
+      <div class="show-details__info" aria-labelledby="show-info-heading">
+        <h2 id="show-info-heading">Details</h2>
 
-          <p>
-            <strong>Genres:</strong>
-            {{ selectedShow.genres.join(', ') }}
-          </p>
+        <p>
+          <strong>Genres:</strong>
+          {{ selectedShow.genres.join(', ') }}
+        </p>
 
-          <p>
-            <strong>Rating:</strong>
-            {{ selectedShow.rating.average }}
-          </p>
+        <p>
+          <strong>Rating:</strong>
+          {{ selectedShow.rating.average }}
+        </p>
 
-          <p>
-            <strong>Status:</strong>
-            {{ selectedShow.status || 'Still running' }}
-          </p>
+        <p>
+          <strong>Status:</strong>
+          {{ selectedShow.status || 'Still running' }}
+        </p>
 
-          <p>
-            <strong>Where to watch:</strong>
-            {{ selectedShow.network?.name || selectedShow.webChannel?.name || 'Not available' }}
-          </p>
+        <p>
+          <strong>Where to watch:</strong>
+          {{ selectedShow.network?.name || selectedShow.webChannel?.name || 'Not available' }}
+        </p>
 
-          <p v-if="selectedShow.network?.name && daysOnAir">
+        <p v-if="selectedShow.network?.name && daysOnAir">
+          <strong>
             Every {{ daysOnAir }}
-            <span v-if="selectedShow.schedule.time"> at {{ selectedShow.schedule.time }} </span>
-          </p>
-        </div>
+            <span v-if="selectedShow.schedule.time">
+              at {{ selectedShow.schedule.time }}
+            </span></strong
+          >
+        </p>
       </div>
-    </template>
+    </div>
   </main>
 </template>
 
@@ -97,26 +109,29 @@ onBeforeMount(async () => {
       width: 100%;
       height: auto;
       border-radius: 5px;
-      box-shadow: 10px 10px 20px grey;
+      box-shadow: var(--shadow-card);
     }
   }
 
   &__content {
-    color: #288254;
     min-width: 0;
     align-self: center;
   }
 
   &__summary {
     margin: 1rem;
-    color: #288254;
+    color: var(--color-primary);
   }
 
   &__info {
-    color: #288254;
     margin-top: 2rem;
 
+    strong {
+      color: var(--color-primary);
+    }
+
     h2 {
+      color: var(--color-primary);
       margin-bottom: 0.5rem;
     }
   }

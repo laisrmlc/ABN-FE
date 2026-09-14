@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Show } from '@/types/showTypes'
+import NotFound from '../NotFound/NotFound.vue'
 
 defineProps<{
   filteredShows: Array<Show>
@@ -12,6 +13,11 @@ const showGenres = (show: Show) => {
 </script>
 
 <template>
+  <NotFound
+    v-if="filteredShows.length === 0"
+    :isShow="false"
+    message="No shows match your search."
+  ></NotFound>
   <section class="show-list" role="region" aria-label="Available shows">
     <div class="sr-only" aria-live="polite">{{ filterAnnouncement }}</div>
     <router-link
@@ -53,12 +59,12 @@ const showGenres = (show: Show) => {
 }
 
 .show-card {
-  border: 1px solid #288254;
+  border: 1px solid var(--color-primary);
   color: black;
   text-decoration: none;
   border-radius: 5px;
   overflow: hidden;
-  box-shadow: 10px 10px 20px grey;
+  box-shadow: var(--shadow-card);
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease;

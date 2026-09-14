@@ -25,9 +25,7 @@ npm run test
 
 The project intentionally keeps dependencies to a minimum.
 
-Vue and Vue Router are used for the application itself. The remaining dependencies are development tools required for the Vue and TypeScript setup, testing, linting, formatting and building the project.
-
-No additional UI or utility libraries were added.
+Vue and Vue Router are used for the application itself. Most of the remaining dependencies are development tools required for the Vue and TypeScript setup, testing, linting, formatting and building the project. The one exception is DOMPurify, added for the reason described below.
 
 ### Sass
 
@@ -35,4 +33,8 @@ I added Sass in order to use Nesting and use BEM CSS pattern. It compiles to pla
 
 ### CSS reset
 
-`src/assets/reset.scss` is a small hand-written reset (based on Josh Comeau's modern CSS reset) instead of a library like `normalize.css` or `destyle.css`. It only touches the browser defaults that actually cause bugs — `box-sizing`, default margins, image sizing, and form elements not inheriting the page's font — while keeping accessible defaults like a readable `line-height` and heading/paragraph text wrapping. Since it's plain CSS with no build step or config of its own, it fits the project's "no extra libraries" approach better than adding a dependency for something this small, and it's imported once, globally, in `main.ts` rather than duplicated across scoped component styles.
+`src/assets/reset.scss` is a small reset based on Josh Comeau's modern CSS reset, used instead of a library like `normalize.css` or `destyle.css`. It only touches defaults that actually cause bugs (`box-sizing`, default margins, image sizing, form elements not inheriting the page's font), keeping accessible defaults like readable `line-height` and text wrapping. It's plain CSS with no build step, imported once, globally, in `main.ts`.
+
+### DOMPurify
+
+The show summary from the TVMaze API contains HTML tags. Rather than rendering that HTML with `v-html` (which would need ongoing sanitization to stay XSS-safe as a permanent trade-off), DOMPurify is used with `ALLOWED_TAGS: []` to strip all tags and keep only the plain text, which is then rendered with normal text interpolation instead. This removes the dangerous sink entirely rather than just sanitizing what goes into it, at the cost of losing any inline formatting, like bold, the summary had.
