@@ -46,7 +46,3 @@ AbortSignal and AbortController were added to avoid keeping requests alive when 
 ### Debounce
 
 Debounce was added to avoid triggering the operation on every input change. Instead, it waits until the user stops typing for a short period before executing it, reducing unnecessary work and improving performance.
-
-### Filters
-
-Both the name and genre filters are applied simultaneously. I treated them as combined filters, so the results must match both criteria when both are selected.
