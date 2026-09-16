@@ -46,21 +46,8 @@ const handleSearch = debounce((event: Event) => {
       </div>
 
       <div class="header__search">
-        <label for="filter-by-name-input" aria-label="Filter shows list by name"></label>
+        <label class="sr-only" for="filter-by-name-input">Filter shows list by name</label>
         <input id="filter-by-name-input" @input="handleSearch" placeholder="Search by name" />
-        <svg
-          class="header__search-icon"
-          viewBox="0 0 24 24"
-          width="16"
-          height="16"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          aria-hidden="true"
-        >
-          <circle cx="11" cy="11" r="7" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
       </div>
     </div>
   </div>
@@ -74,6 +61,10 @@ const handleSearch = debounce((event: Event) => {
 
   &__title {
     color: var(--color-accent);
+
+    &:focus {
+      outline: none;
+    }
   }
 
   &__genre-select {
@@ -81,7 +72,7 @@ const handleSearch = debounce((event: Event) => {
     max-width: 20rem;
     border: 1px solid var(--color-primary);
     border-radius: 5px;
-    color: var(--color-primary);
+    color: black;
   }
 
   &__genre-select-label {
@@ -106,7 +97,6 @@ const handleSearch = debounce((event: Event) => {
   }
 
   &__search {
-    position: relative;
     margin-left: auto;
     display: flex;
     align-items: center;
@@ -116,18 +106,10 @@ const handleSearch = debounce((event: Event) => {
     input {
       width: 100%;
       box-sizing: border-box;
-      padding-right: 2rem;
       border: 1px solid var(--color-primary);
       border-radius: 5px;
       max-width: 20rem;
     }
-  }
-
-  &__search-icon {
-    position: absolute;
-    right: 0.5rem;
-    color: var(--color-primary);
-    pointer-events: none;
   }
 
   @media (max-width: 570px) {

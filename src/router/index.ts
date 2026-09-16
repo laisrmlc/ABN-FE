@@ -8,12 +8,7 @@ const router = createRouter({
   routes: [
     { path: '/', name: 'dashboard', component: Dashboard },
     { path: '/show-details/:id', name: 'show-details', component: ShowDetails },
-    {
-      path: '/:pathMatch(.*)*',
-      name: 'not-found',
-      component: NotFound,
-      props: { isShow: true },
-    },
+    { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound },
   ],
 })
 

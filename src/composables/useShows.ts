@@ -17,7 +17,11 @@ export const useShows = () => {
       const result = await getShows(controller.signal)
       shows.value = sortByRating(result)
     } catch (err) {
-      if (err instanceof DOMException && err.name === 'AbortError') return
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        console.warn('Request aborted:', err)
+        return
+      }
+      console.error(err)
       error.value = true
     } finally {
       loading.value = false

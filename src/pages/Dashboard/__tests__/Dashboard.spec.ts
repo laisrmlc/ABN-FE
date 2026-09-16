@@ -61,14 +61,14 @@ describe('Dashboard', () => {
     },
   )
 
-  it('renders the not found state, without a title or link, when nothing matches the search box', async () => {
+  it('renders the empty state, without a title or link, when nothing matches the search box', async () => {
     const wrapper = await mountDashboard()
 
     await wrapper.find('input').setValue('nonexistent show')
 
     expect(cardTitles(wrapper)).toEqual([])
-    expect(wrapper.find('.page-not-found').exists()).toBe(true)
-    expect(wrapper.find('.page-not-found h1').exists()).toBe(false)
+    expect(wrapper.find('.empty-state').exists()).toBe(true)
+    expect(wrapper.text()).not.toContain('Page not found')
     expect(wrapper.findComponent(RouterLinkStub).exists()).toBe(false)
   })
 

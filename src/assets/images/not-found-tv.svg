@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 220" width="240" height="220">
+  <line x1="90" y1="40" x2="60" y2="8" stroke="#4a4a4a" stroke-width="4" stroke-linecap="round" />
+  <line x1="150" y1="40" x2="180" y2="8" stroke="#4a4a4a" stroke-width="4" stroke-linecap="round" />
+  <circle cx="60" cy="8" r="6" fill="#4a4a4a" />
+  <circle cx="180" cy="8" r="6" fill="#4a4a4a" />
+
+  <rect x="20" y="34" width="200" height="140" rx="18" fill="#F4C430" stroke="#B8860B" stroke-width="4" />
+
+  <rect x="40" y="52" width="130" height="104" rx="8" fill="#2B2B2B" />
+  <text
+    x="105"
+    y="114"
+    font-family="'Courier New', monospace"
+    font-size="40"
+    font-weight="bold"
+    fill="#F4C430"
+    text-anchor="middle"
+  >404</text>
+
+  <circle cx="192" cy="80" r="9" fill="#B8860B" />
+  <circle cx="192" cy="112" r="9" fill="#B8860B" />
+  <rect x="184" y="136" width="16" height="8" rx="2" fill="#B8860B" />
+
+  <rect x="60" y="174" width="16" height="20" rx="3" fill="#8a6300" />
+  <rect x="164" y="174" width="16" height="20" rx="3" fill="#8a6300" />
+</svg>

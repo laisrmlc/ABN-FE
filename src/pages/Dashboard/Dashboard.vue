@@ -3,6 +3,7 @@ import { useShows } from '@/composables/useShows'
 import { computed, onBeforeMount, ref } from 'vue'
 import DashboardHeader from './DashboardHeader.vue'
 import DashboardShowList from './DashboardShowList.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 import type { Show } from '@/types/showTypes.ts'
 
 const { shows, loading, error, fetchShows } = useShows()
@@ -54,12 +55,16 @@ onBeforeMount(async () => {
     @search="nameFilter = $event"
   ></DashboardHeader>
 
-  <p v-if="loading" role="status">Loading shows…</p>
+  <LoadingSpinner v-if="loading" />
 
   <p v-else-if="error" role="alert">
     Something went wrong while loading shows. Please try again later.
   </p>
 
   <!--TV SHOWS LIST-->
-  <DashboardShowList v-else :filteredShows="filteredShows" :filterAnnouncement="filterAnnouncement" />
+  <DashboardShowList
+    v-else
+    :filteredShows="filteredShows"
+    :filterAnnouncement="filterAnnouncement"
+  />
 </template>
