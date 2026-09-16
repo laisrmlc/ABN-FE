@@ -16,7 +16,11 @@ export const useShowDetails = () => {
       error.value = false
       selectedShow.value = await getShowInfo(id, controller.signal)
     } catch (err) {
-      if (err instanceof DOMException && err.name === 'AbortError') return
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        console.warn('Request aborted:', err)
+        return
+      }
+      console.error(err)
       error.value = true
     } finally {
       loading.value = false

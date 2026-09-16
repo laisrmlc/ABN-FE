@@ -1,31 +1,20 @@
 <script setup lang="ts">
-import notFoundImage from '@/assets/images/not-found-tv.png'
+import { onBeforeMount } from 'vue'
+import EmptyState from '@/components/EmptyState.vue'
 
-withDefaults(
-  defineProps<{
-    isShow?: boolean
-    message?: string
-  }>(),
-  {
-    isShow: false,
-    message: 'Sorry, the content you are looking for is not available.',
-  },
-)
+defineProps<{ message?: string }>()
+
+onBeforeMount(() => {
+  document.title = 'Page not found | TV Shows'
+})
 </script>
 
 <template>
   <div class="page-not-found">
-    <h1 v-if="isShow">Page not found</h1>
-    <div class="page-not-found__image-wrapper">
-      <img
-        :src="notFoundImage"
-        class="page-not-found__image"
-        alt="Image of a vintage yellow TV written 404 in the screen"
-      />
-    </div>
-    <div class="page-not-found__message">
-      <p>{{ message }}</p>
-      <router-link v-if="isShow" key="dashboard-link" :to="{ name: 'dashboard' }">
+    <h1 class="page-not-found__heading">Page not found</h1>
+    <EmptyState :message="message" />
+    <div class="page-not-found__link">
+      <router-link key="dashboard-link" :to="{ name: 'dashboard' }">
         Go back to shows list
       </router-link>
     </div>
@@ -34,27 +23,16 @@ withDefaults(
 
 <style scoped lang="scss">
 .page-not-found {
-  display: block;
-  padding: 2rem;
-  justify-content: center;
   color: var(--color-primary);
 
-  &__message {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  &__heading {
+    padding: 2rem 2rem 0;
   }
 
-  &__image-wrapper {
+  &__link {
     display: flex;
-    width: 100%;
-    align-items: center;
     justify-content: center;
-  }
-
-  &__image {
-    max-height: 40vh;
+    padding: 0 2rem 2rem;
   }
 }
 </style>

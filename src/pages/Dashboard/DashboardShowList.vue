@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Show } from '@/types/showTypes'
-import NotFound from '../NotFound/NotFound.vue'
+import EmptyState from '@/components/EmptyState.vue'
 
 defineProps<{
   filteredShows: Array<Show>
@@ -13,11 +13,7 @@ const showGenres = (show: Show) => {
 </script>
 
 <template>
-  <NotFound
-    v-if="filteredShows.length === 0"
-    :isShow="false"
-    message="No shows match your search."
-  ></NotFound>
+  <EmptyState v-if="filteredShows.length === 0" message="No shows match your search." />
   <section class="show-list" role="region" aria-label="Available shows">
     <div class="sr-only" aria-live="polite">{{ filterAnnouncement }}</div>
     <router-link

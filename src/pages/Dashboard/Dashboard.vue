@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useShows } from '@/composables/useShows'
-import { computed, onBeforeMount, ref } from 'vue'
+import { computed, nextTick, onBeforeMount, ref } from 'vue'
 import DashboardHeader from './DashboardHeader.vue'
 import DashboardShowList from './DashboardShowList.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 import type { Show } from '@/types/showTypes.ts'
 
 const { shows, loading, error, fetchShows } = useShows()
@@ -41,9 +42,16 @@ const filterAnnouncement = computed(() => {
   return `${count} ${showsLabel} found for genre ${selectedGenre.value}`
 })
 
+const listRef = ref<HTMLElement | null>(null)
+
 onBeforeMount(async () => {
   document.title = 'TV Shows'
   await fetchShows()
+
+  if (!error.value) {
+    await nextTick()
+    listRef.value?.focus()
+  }
 })
 </script>
 
@@ -54,12 +62,14 @@ onBeforeMount(async () => {
     @search="nameFilter = $event"
   ></DashboardHeader>
 
-  <p v-if="loading" role="status">Loading shows…</p>
+  <LoadingSpinner v-if="loading" />
 
   <p v-else-if="error" role="alert">
     Something went wrong while loading shows. Please try again later.
   </p>
 
   <!--TV SHOWS LIST-->
-  <DashboardShowList v-else :filteredShows="filteredShows" :filterAnnouncement="filterAnnouncement" />
+  <div v-else ref="listRef" tabindex="-1">
+    <DashboardShowList :filteredShows="filteredShows" :filterAnnouncement="filterAnnouncement" />
+  </div>
 </template>

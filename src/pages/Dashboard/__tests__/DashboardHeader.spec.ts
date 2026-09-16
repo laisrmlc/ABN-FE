@@ -36,6 +36,10 @@ describe('DashboardHeader', () => {
       props: { genres: [], selectedGenre: 'all' },
     })
 
+    expect(wrapper.find('label[for="filter-by-name-input"]').text()).toBe(
+      'Filter shows list by name',
+    )
+
     await wrapper.find('input').setValue('office')
     vi.advanceTimersByTime(200)
 

@@ -4,6 +4,7 @@ import { computed, nextTick, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import DOMPurify from 'dompurify'
 import NotFound from '../NotFound/NotFound.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 const daysOnAir = ref('')
 const route = useRoute()
@@ -35,13 +36,13 @@ watch(
 </script>
 
 <template>
-  <p v-if="!selectedShow && loading" role="status">Loading show details…</p>
+  <LoadingSpinner v-if="!selectedShow && loading" />
 
   <p v-else-if="error" role="alert">
     Something went wrong while loading this show. Please try again later.
   </p>
 
-  <NotFound v-else-if="!selectedShow && !loading" :isShow="true"></NotFound>
+  <NotFound v-else-if="!selectedShow && !loading" />
 
   <main v-if="selectedShow" class="show-details">
     <div class="show-details__summary" aria-labelledby="show-title">

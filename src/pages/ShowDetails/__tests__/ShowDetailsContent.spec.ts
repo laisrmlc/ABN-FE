@@ -72,6 +72,7 @@ describe('ShowDetailsContent', () => {
     expect(wrapper.text()).toContain('Page not found')
     expect(wrapper.find('[role="status"]').exists()).toBe(false)
     expect(wrapper.find('#show-title').exists()).toBe(false)
+    expect(document.title).toBe('Page not found | TV Shows')
   })
 
   it('shows an error message, not the not-found page, when the fetch fails', async () => {

@@ -8,15 +8,15 @@ import { MOCK_SHOWS } from '@/test/fixtures/shows'
 import { createRouter, createMemoryHistory } from 'vue-router'
 import Dashboard from '@/pages/Dashboard/Dashboard.vue'
 import ShowDetails from '@/pages/ShowDetails/ShowDetails.vue'
+import NotFound from '@/pages/NotFound/NotFound.vue'
 
-// Mirrors the real router (src/router/index.ts) but with in-memory history,
-// so tests can navigate without a real browser URL.
 export const createTestRouter = () =>
   createRouter({
     history: createMemoryHistory(),
     routes: [
       { path: '/', name: 'dashboard', component: Dashboard },
       { path: '/show-details/:id', name: 'show-details', component: ShowDetails },
+      { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound },
     ],
   })
 
@@ -68,5 +68,13 @@ describe('App', () => {
     expect(wrapper.text()).toContain('Page not found')
     expect(wrapper.find('[role="status"]').exists()).toBe(false)
     expect(wrapper.find('#show-title').exists()).toBe(false)
+  })
+
+  it('shows the "page not found" screen and updates the title when visiting an unknown route', async () => {
+    const wrapper = await visit('/this-route-does-not-exist')
+
+    expect(wrapper.text()).toContain('Page not found')
+    expect(wrapper.text()).toContain('Go back to shows list')
+    expect(document.title).toBe('Page not found | TV Shows')
   })
 })
