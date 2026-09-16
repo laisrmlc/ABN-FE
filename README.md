@@ -29,7 +29,7 @@ Vue and Vue Router are used for the application itself. Most of the remaining de
 
 ### Sass
 
-I added Sass in order to use Nesting and use BEM CSS pattern. It compiles to plain CSS, so it works seamlessly with Vue's `scoped` styles and adds no runtime cost.
+Sass was added in order to use Nesting and use BEM CSS pattern. It compiles to plain CSS, so it works seamlessly with Vue's `scoped` styles and adds no runtime cost.
 
 ### CSS reset
 
@@ -38,3 +38,11 @@ I added Sass in order to use Nesting and use BEM CSS pattern. It compiles to pla
 ### DOMPurify
 
 The show summary from the TVMaze API contains HTML tags. Rather than rendering that HTML with `v-html` (which would need ongoing sanitization to stay XSS-safe as a permanent trade-off), DOMPurify is used with `ALLOWED_TAGS: []` to strip all tags and keep only the plain text, which is then rendered with normal text interpolation instead. This removes the dangerous sink entirely rather than just sanitizing what goes into it, at the cost of losing any inline formatting, like bold, the summary had.
+
+### AbortSignal and AbortController
+
+AbortSignal and AbortController were added to avoid keeping requests alive when their results are no longer needed. This helps prevent unnecessary work and makes request handling more predictable, especially when a component is unmounted or a request takes longer than expected. This project is small and the amount of TV shows are not big, but in case it grows to a bigger scale it already has this implemented.
+
+### Debounce
+
+Debounce was added to avoid triggering the operation on every input change. Instead, it waits until the user stops typing for a short period before executing it, reducing unnecessary work and improving performance.
