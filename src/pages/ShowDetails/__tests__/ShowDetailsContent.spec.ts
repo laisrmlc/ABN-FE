@@ -33,7 +33,7 @@ describe('ShowDetailsContent', () => {
   })
 
   afterEach(() => {
-    vi.clearAllMocks()
+    vi.restoreAllMocks()
   })
 
   it.each<{ id: string; label: string; includes: string[]; excludes: string[] }>([
@@ -76,6 +76,7 @@ describe('ShowDetailsContent', () => {
   })
 
   it('shows an error message, not the not-found page, when the fetch fails', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
     vi.mocked(getShowInfo).mockRejectedValue(new DOMException('signal timed out', 'TimeoutError'))
 
     const wrapper = await mountContent()
@@ -85,6 +86,7 @@ describe('ShowDetailsContent', () => {
     )
     expect(wrapper.text()).not.toContain('Page not found')
     expect(wrapper.find('#show-title').exists()).toBe(false)
+    expect(consoleError).toHaveBeenCalledOnce()
   })
 
   it('refetches and updates the page when the route id changes without remounting', async () => {

@@ -43,7 +43,7 @@ No Pinia or Vuex. Each page keeps its state in its own composable, and nothing n
 
 Every request has a five-second timeout, and also aborts if the component unmounts first, whichever happens sooner, using the native `AbortController`/`AbortSignal` APIs. An aborted request just gets ignored instead of showing an error, since the user already navigated away. A timed-out request currently shows the same generic error as any other failure. That's a simplification I made on purpose.
 
-The full list of shows is fetched once, and the name search and genre filter both run in memory afterwards, so there's no extra request per keystroke or filter change. The search input is still debounced, but only to avoid recomputing and re-announcing results on every keystroke. Nothing is cached between visits, so returning to the dashboard or to a show already seen fetches it again.
+The full list of shows is fetched once, and the name search and genre filter both run in memory afterwards, so there's no extra request per keystroke or filter change. The search input is still debounced, but only to avoid recomputing and re-announcing results on every keystroke.
 
 ## Accessibility
 
@@ -55,4 +55,8 @@ Route changes in an SPA don't reset focus the way a full page load would, so I m
 
 ## Error handling
 
-Failed requests are reduced to a simple boolean flag rather than the actual error, and the page shows one fixed, generic message with an `alert` role. The raw error isn't actionable for the user, and leaving it out avoids exposing backend details. A 404 on a show's details page renders the `NotFound` state instead, since "this show doesn't exist" is calmer and more specific than "something went wrong." Errors are still logged to the console for local debugging.
+For error handling, I wanted to make sure the user knows when something went wrong without exposing unnecessary technical details.
+
+When a request fails, the UI shows a clear and consistent error message. The original error is not displayed because it is not useful for the user and may expose backend details. It is still logged to the console to help with debugging during development.
+
+When no shows match the filters in this case, I reuse the `EmptyState` component instead of showing an error.

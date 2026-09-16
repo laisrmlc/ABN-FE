@@ -48,7 +48,6 @@ const handleSearch = debounce((event: Event) => {
       <div class="header__search">
         <label class="sr-only" for="filter-by-name-input">Filter shows list by name</label>
         <input id="filter-by-name-input" @input="handleSearch" placeholder="Search by name" />
-        <span class="header__search-icon" aria-hidden="true"></span>
       </div>
     </div>
   </div>
@@ -62,6 +61,10 @@ const handleSearch = debounce((event: Event) => {
 
   &__title {
     color: var(--color-accent);
+
+    &:focus {
+      outline: none;
+    }
   }
 
   &__genre-select {
@@ -69,7 +72,7 @@ const handleSearch = debounce((event: Event) => {
     max-width: 20rem;
     border: 1px solid var(--color-primary);
     border-radius: 5px;
-    color: var(--color-primary);
+    color: black;
   }
 
   &__genre-select-label {
@@ -94,7 +97,6 @@ const handleSearch = debounce((event: Event) => {
   }
 
   &__search {
-    position: relative;
     margin-left: auto;
     display: flex;
     align-items: center;
@@ -104,21 +106,10 @@ const handleSearch = debounce((event: Event) => {
     input {
       width: 100%;
       box-sizing: border-box;
-      padding-right: 2rem;
       border: 1px solid var(--color-primary);
       border-radius: 5px;
       max-width: 20rem;
     }
-  }
-
-  &__search-icon {
-    position: absolute;
-    right: 0.5rem;
-    width: 1rem;
-    height: 1rem;
-    background-color: var(--color-primary);
-    mask: url('@/assets/icons/search.svg') no-repeat center / contain;
-    pointer-events: none;
   }
 
   @media (max-width: 570px) {
