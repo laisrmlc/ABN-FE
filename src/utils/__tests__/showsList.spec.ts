@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { getShowInfo, getShows, sortByRating } from '../showsList'
-import { MOCK_SHOWS } from '@/utils/constants'
+import { MOCK_SHOWS } from '@/test/fixtures/shows'
 
 describe('sortByRating', () => {
   it('orders shows from highest rating to lowest', () => {
@@ -18,37 +18,35 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-describe('getShows', () => {
-  it('returns the parsed shows on a successful response', async () => {
+describe.each([
+  { name: 'getShows', call: () => getShows(new AbortController().signal), payload: MOCK_SHOWS },
+  {
+    name: 'getShowInfo',
+    call: () => getShowInfo('1', new AbortController().signal),
+    payload: MOCK_SHOWS[0],
+  },
+])('$name', ({ call, payload }) => {
+  it('returns the parsed payload on a successful response', async () => {
     vi.stubGlobal(
       'fetch',
-      vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve(MOCK_SHOWS) }),
+      vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve(payload) }),
     )
 
-    await expect(getShows()).resolves.toEqual(MOCK_SHOWS)
+    await expect(call()).resolves.toEqual(payload)
   })
 
-  it('returns null when the response is not ok', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }))
+  it('throws when the response is not ok', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 500 }))
 
-    await expect(getShows()).resolves.toBeNull()
+    await expect(call()).rejects.toThrow('500')
   })
 })
 
 describe('getShowInfo', () => {
-  it('returns the parsed show on a successful response', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve(MOCK_SHOWS[0]) }),
-    )
+  it('returns null when the show does not exist (404)', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404 }))
 
-    await expect(getShowInfo('1')).resolves.toEqual(MOCK_SHOWS[0])
-  })
-
-  it('returns null when the response is not ok', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }))
-
-    await expect(getShowInfo('1')).resolves.toBeNull()
+    await expect(getShowInfo('5000', new AbortController().signal)).resolves.toBeNull()
   })
 
   it('propagates a timeout error from an aborted request', async () => {
@@ -57,6 +55,6 @@ describe('getShowInfo', () => {
       vi.fn().mockRejectedValue(new DOMException('signal timed out', 'TimeoutError')),
     )
 
-    await expect(getShowInfo('1')).rejects.toThrow('signal timed out')
+    await expect(getShowInfo('1', new AbortController().signal)).rejects.toThrow('signal timed out')
   })
 })

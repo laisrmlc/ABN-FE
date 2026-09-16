@@ -3,7 +3,7 @@ import { flushPromises, mount, RouterLinkStub } from '@vue/test-utils'
 import App from '../App.vue'
 
 import { getShows, getShowInfo } from '@/utils/showsList'
-import { MOCK_SHOWS } from '@/utils/constants'
+import { MOCK_SHOWS } from '@/test/fixtures/shows'
 
 import { createRouter, createMemoryHistory } from 'vue-router'
 import Dashboard from '@/pages/Dashboard/Dashboard.vue'

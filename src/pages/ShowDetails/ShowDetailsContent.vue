@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import { getShowInfo } from '@/utils/showsList'
-import { computed, nextTick, onBeforeMount, ref } from 'vue'
+import { useShowDetails } from '@/composables/useShowDetails'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import DOMPurify from 'dompurify'
 import NotFound from '../NotFound/NotFound.vue'
-import type { Show } from '@/types/showTypes.ts'
 
 const daysOnAir = ref('')
 const route = useRoute()
-const showId = route.params.id
 
-const selectedShow = ref<Show | null>(null)
-const loading = ref(false)
+const { selectedShow, loading, error, fetchShow } = useShowDetails()
 
 const plainTextSummary = computed(() =>
   selectedShow.value ? DOMPurify.sanitize(selectedShow.value.summary, { ALLOWED_TAGS: [] }) : '',
@@ -19,26 +16,30 @@ const plainTextSummary = computed(() =>
 
 const showTitleRef = ref<HTMLElement | null>(null)
 
-onBeforeMount(async () => {
-  try {
-    loading.value = true
-    selectedShow.value = await getShowInfo(showId?.toString() || '')
-  } finally {
-    loading.value = false
-  }
+watch(
+  () => route.params.id,
+  async (rawShowId) => {
+    const showId = Array.isArray(rawShowId) ? rawShowId[0] : rawShowId
+    await fetchShow(showId ?? '')
 
-  if (selectedShow.value) {
-    daysOnAir.value = selectedShow.value.schedule.days.join(' and ')
-    document.title = `${selectedShow.value.name} | TV Shows`
+    if (selectedShow.value) {
+      daysOnAir.value = selectedShow.value.schedule.days.join(' and ')
+      document.title = `${selectedShow.value.name} | TV Shows`
 
-    await nextTick()
-    showTitleRef.value?.focus()
-  }
-})
+      await nextTick()
+      showTitleRef.value?.focus()
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
   <p v-if="!selectedShow && loading" role="status">Loading show details…</p>
+
+  <p v-else-if="error" role="alert">
+    Something went wrong while loading this show. Please try again later.
+  </p>
 
   <NotFound v-else-if="!selectedShow && !loading" :isShow="true"></NotFound>
 

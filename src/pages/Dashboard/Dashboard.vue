@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { getShows, sortByRating } from '@/utils/showsList'
+import { useShows } from '@/composables/useShows'
 import { computed, onBeforeMount, ref } from 'vue'
 import DashboardHeader from './DashboardHeader.vue'
 import DashboardShowList from './DashboardShowList.vue'
 import type { Show } from '@/types/showTypes.ts'
 
-const shows = ref<Show[]>([])
-const loading = ref(false)
-const error = ref(false)
+const { shows, loading, error, fetchShows } = useShows()
 const selectedGenre = ref('all')
 const nameFilter = ref('')
 
@@ -45,17 +43,7 @@ const filterAnnouncement = computed(() => {
 
 onBeforeMount(async () => {
   document.title = 'TV Shows'
-
-  try {
-    loading.value = true
-    const result = await getShows()
-    shows.value = result ? sortByRating(result) : []
-    error.value = result === null
-  } catch {
-    error.value = true
-  } finally {
-    loading.value = false
-  }
+  await fetchShows()
 })
 </script>
 
