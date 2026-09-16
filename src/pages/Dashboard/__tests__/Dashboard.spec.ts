@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount, RouterLinkStub } from '@vue/test-utils'
 import Dashboard from '../Dashboard.vue'
 import { getShows } from '@/utils/showsList'
-import { MOCK_SHOWS } from '@/utils/constants'
+import { MOCK_SHOWS } from '@/test/fixtures/shows'
 
 vi.mock('@/utils/showsList', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/utils/showsList')>()
@@ -24,6 +24,14 @@ const mountDashboard = async () => {
 const cardTitles = (wrapper: Awaited<ReturnType<typeof mountDashboard>>) =>
   wrapper.findAll('.show-card__title').map((title) => title.text())
 
+const ALL_TITLES_BY_RATING = [
+  'Breaking Bad',
+  'The Office',
+  'Better Call Saul',
+  'Stranger Things',
+  'Cursed Sitcom',
+]
+
 describe('Dashboard', () => {
   beforeEach(() => {
     vi.mocked(getShows).mockResolvedValue(MOCK_SHOWS)
@@ -36,22 +44,22 @@ describe('Dashboard', () => {
   it('loads the shows and renders them sorted by rating', async () => {
     const wrapper = await mountDashboard()
 
-    expect(cardTitles(wrapper)).toEqual([
-      'Breaking Bad',
-      'The Office',
-      'Better Call Saul',
-      'Stranger Things',
-      'Cursed Sitcom',
-    ])
+    expect(cardTitles(wrapper)).toEqual(ALL_TITLES_BY_RATING)
   })
 
-  it('filters the list down to shows that matches the search box', async () => {
-    const wrapper = await mountDashboard()
+  it.each([
+    { control: 'input', value: 'office', expected: ['The Office'] },
+    { control: 'select', value: 'Comedy', expected: ['The Office', 'Cursed Sitcom'] },
+  ])(
+    'filters the list down to shows matching $control "$value"',
+    async ({ control, value, expected }) => {
+      const wrapper = await mountDashboard()
 
-    await wrapper.find('input').setValue('office')
+      await wrapper.find(control).setValue(value)
 
-    expect(cardTitles(wrapper)).toEqual(['The Office'])
-  })
+      expect(cardTitles(wrapper)).toEqual(expected)
+    },
+  )
 
   it('renders the not found state, without a title or link, when nothing matches the search box', async () => {
     const wrapper = await mountDashboard()
@@ -64,27 +72,13 @@ describe('Dashboard', () => {
     expect(wrapper.findComponent(RouterLinkStub).exists()).toBe(false)
   })
 
-  it('filters the list down to shows in the selected genre', async () => {
-    const wrapper = await mountDashboard()
-
-    await wrapper.find('select').setValue('Comedy')
-
-    expect(cardTitles(wrapper)).toEqual(['The Office', 'Cursed Sitcom'])
-  })
-
-  it('goes back to the full list sorted by rating swhen "All genres" is picked again', async () => {
+  it('goes back to the full list sorted by rating when "All genres" is picked again', async () => {
     const wrapper = await mountDashboard()
 
     await wrapper.find('select').setValue('Drama')
     await wrapper.find('select').setValue('all')
 
-    expect(cardTitles(wrapper)).toEqual([
-      'Breaking Bad',
-      'The Office',
-      'Better Call Saul',
-      'Stranger Things',
-      'Cursed Sitcom',
-    ])
+    expect(cardTitles(wrapper)).toEqual(ALL_TITLES_BY_RATING)
   })
 
   it('combines the genre filter and the name search', async () => {

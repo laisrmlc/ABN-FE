@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { mount, RouterLinkStub } from '@vue/test-utils'
 import DashboardShowList from '../DashboardShowList.vue'
-import { MOCK_SHOWS } from '@/utils/constants'
+import { MOCK_SHOWS } from '@/test/fixtures/shows'
 
 describe('DashboardShowList', () => {
   it('renders a card for every show it is given with name and genres', () => {
