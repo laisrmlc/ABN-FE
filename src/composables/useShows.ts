@@ -1,35 +1,19 @@
 import { onUnmounted, ref, shallowReadonly } from 'vue'
 import { getShows, sortByRating } from '@/utils/showsList'
 import type { Show } from '@/types/showTypes'
+import { useFetchComposable } from './useFetchComposable'
 
 export const useShows = () => {
-  const shows = ref<Show[]>([])
-  const loading = ref(false)
-  const error = ref(false)
-
-  const controller = new AbortController()
-  onUnmounted(() => controller.abort())
+  const showsList = ref<Show[]>([])
+  const { loading, error, execute } = useFetchComposable()
 
   const fetchShows = async () => {
-    try {
-      loading.value = true
-      error.value = false
-      const result = await getShows(controller.signal)
-      shows.value = sortByRating(result)
-    } catch (err) {
-      if (err instanceof DOMException && err.name === 'AbortError') {
-        console.warn('Request aborted:', err)
-        return
-      }
-      console.error(err)
-      error.value = true
-    } finally {
-      loading.value = false
-    }
+    const response = await execute((signal: AbortSignal) => getShows(signal))
+    showsList.value = sortByRating(response || [])
   }
 
   return {
-    shows: shallowReadonly(shows),
+    shows: shallowReadonly(showsList),
     loading: shallowReadonly(loading),
     error: shallowReadonly(error),
     fetchShows,
