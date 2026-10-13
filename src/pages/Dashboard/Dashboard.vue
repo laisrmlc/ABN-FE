@@ -59,7 +59,6 @@ const filterAnnouncement = computed(() => {
 })
 
 onBeforeMount(async () => {
-  document.title = 'TV Shows'
   await fetchShows()
 })
 </script>
