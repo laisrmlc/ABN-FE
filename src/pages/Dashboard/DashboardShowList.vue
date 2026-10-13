@@ -23,7 +23,7 @@ const showGenres = (show: Show) => {
       :to="{ name: 'show-details', params: { id: show.id } }"
     >
       <div class="show-card__image">
-        <img :src="show.image?.medium" alt="" />
+        <img :src="show.image?.medium" alt="" loading="lazy" />
       </div>
 
       <div class="show-card__content">
