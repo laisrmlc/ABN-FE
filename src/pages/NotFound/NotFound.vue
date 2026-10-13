@@ -1,12 +1,7 @@
 <script setup lang="ts">
-import { onBeforeMount } from 'vue'
 import EmptyState from '@/components/EmptyState.vue'
 
 defineProps<{ message?: string }>()
-
-onBeforeMount(() => {
-  document.title = 'Page not found | TV Shows'
-})
 </script>
 
 <template>
