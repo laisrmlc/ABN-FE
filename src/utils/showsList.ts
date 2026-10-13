@@ -18,10 +18,11 @@ export const sortByRating = (shows: Array<Show>): Array<Show> => {
 }
 
 export const getShowInfo = async (id: string, signal: AbortSignal): Promise<Show | null> => {
+  console.log('1. Starting fetch', id)
   const response = await fetch(`${API_BASE_URL}/shows/${id}`, {
     signal: AbortSignal.any([AbortSignal.timeout(REQUEST_TIMEOUT_MS), signal]),
   })
-
+  console.log('Response status:', response.status)
   if (response.status === 404) {
     return null
   }
