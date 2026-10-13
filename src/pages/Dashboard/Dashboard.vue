@@ -16,11 +16,27 @@ const genres = computed(() => {
   return [...new Set(genresFromShows)].sort()
 })
 
+const showsByGenre = computed(() => {
+  const showsMap = new Map()
+
+  shows.value.forEach((show: Show) => {
+    show.genres.forEach((genre: string) => {
+      if (showsMap.has(genre)) {
+        showsMap.get(genre).push(show)
+      } else {
+        showsMap.set(genre, [show])
+      }
+    })
+  })
+
+  return showsMap
+})
+
 const filteredShows = computed(() => {
   let result = shows.value
 
   if (selectedGenre.value !== 'all') {
-    result = result.filter((show: Show) => show.genres.includes(selectedGenre.value))
+    result = showsByGenre.value.get(selectedGenre.value)
   }
 
   const search = nameFilter.value.trim().toLowerCase()
